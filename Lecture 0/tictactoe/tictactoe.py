@@ -80,6 +80,9 @@ def terminal(board):
     """
     Returns True if game is over, False otherwise.
     """
+    # 一定自习思考为什么是这个顺序，有bug
+    if winner(board) != None:
+        return True
     for h in board:
         for cell in h:
             if cell == EMPTY:
@@ -98,14 +101,42 @@ def utility(board):
         return -1
     else:
         return 0
+    
+def score(board, depth):
+    win = winner(board)
+    if win == X:
+        return 10 - depth
+    elif win == O:
+        return depth - 10
+    else:
+        return 0
 
-
-def minimax(board):
+# 在我的参考资料中有设计depth的相关实现
+def minimax(board, depth):
     """
     Returns the optimal action for the current player on the board.
     """
     if terminal(board):
-        return None
-    Actions = actions(board)
-    turn = player(board)
-    v = []
+        return score(board,depth), None
+    
+    depth += 1
+    scores = []
+    moves = []
+
+    for move in actions(board):
+        possible_game = result(board, move)
+        move_score,_ = minimax(possible_game, depth)
+        scores.append(move_score)
+        moves.append(move)
+
+    if player(board) == X:
+        max_score_index = max(enumerate(scores), key=lambda x: x[1])[0]
+        best_move = moves[max_score_index]
+        return scores[max_score_index], best_move
+    else:
+        min_score_index = min(enumerate(scores), key=lambda x: x[1])[0]
+        best_move = moves[min_score_index]
+        return scores[min_score_index], best_move
+
+    
+    
