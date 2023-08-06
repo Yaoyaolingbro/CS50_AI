@@ -4,6 +4,9 @@ rain = Symbol("rain")
 hagrid = Symbol("hagrid")
 dumbledore = Symbol("dumbledore")
 
+sentence = And(rain, hagrid)
+print(sentence.formula())
+
 knowledge = And(
     Implication(Not(rain), hagrid),
     Or(hagrid, dumbledore),
